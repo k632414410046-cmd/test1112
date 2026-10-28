@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Conditionals & Vocabulary Test - Ms Ngoc Hai FTU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-bg-1: #8854C0;
+            --primary-bg-2: #FDCB6E;
+            --primary-bg-3: #00C9A7;
+            --primary-bg-4: #FF7675;
+            --correct-color: #00D26A;
+            --correct-shadow: #00A352;
+            --wrong-color: #FF4757;
+            --wrong-shadow: #D63031;
+            --selected-color: #6C5CE7;
+            --selected-shadow: #4834D4;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-color: #2D3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #8854C0, #FDCB6E, #00C9A7, #FF7675, #6C5CE7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
+            padding: 20px 10px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* SVG Floating Pattern Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><text x="15" y="35" font-size="22" opacity="0.3">⭐</text><text x="75" y="25" font-size="24" opacity="0.3">🌸</text><text x="95" y="85" font-size="20" opacity="0.3">🍓</text><text x="25" y="95" font-size="24" opacity="0.3">🐱</text><text x="60" y="60" font-size="22" opacity="0.3">☁️</text></svg>');
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 860px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            border: 3px solid #FFF;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #6C5CE7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .teacher-tag {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #D63031;
+            background: #FFEAA7;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 10px;
+            border: 2px solid #FDCB6E;
+            margin-top: 4px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFF;
+            padding: 12px 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 0px #DFE6E9;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            margin: 0 15px;
+            background: #DFE6E9;
+            height: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00C9A7, #00D26A);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .filter-bar {
+            display: none;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .filter-bar.active {
+            display: flex;
+        }
+
+        .filter-btn {
+            background: #FFF;
+            border: 3px solid #CBD5E1;
+            border-bottom: 5px solid #94A3B8;
+            border-radius: 14px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #6C5CE7;
+            border-color: #6C5CE7;
+            border-bottom-color: #4834D4;
+            color: #FFF;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 4px solid #FFF;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+
+        .question-card.hidden {
+            display: none;
+        }
+
+        .card-header-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0984E3;
+            background: #E1F5FE;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .level-indicator {
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .type-badge {
+            font-size: 0.78rem;
+            font-weight: 800;
+            background: #F1F5F9;
+            color: #475569;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        .status-badge {
+            display: none;
+            font-size: 0.82rem;
+            font-weight: 900;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .status-badge.correct {
+            display: inline-block;
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-badge.wrong {
+            display: inline-block;
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .question-text {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #2D3436;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .gap-slot {
+            display: inline-block;
+            min-width: 100px;
+            padding: 2px 8px;
+            border-bottom: 3px dashed #6C5CE7;
+            color: #6C5CE7;
+            font-weight: 900;
+            text-align: center;
+            background: #F3E8FF;
+            border-radius: 8px;
+            margin: 0 4px;
+        }
+
+        .sale-sign-box {
+            background: linear-gradient(135deg, #FF7675, #D63031);
+            color: #FFF;
+            padding: 14px;
+            border-radius: 14px;
+            border: 3px dashed #FFF;
+            text-align: center;
+            font-weight: 900;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+            font-size: 0.98rem;
+        }
+
+        .phone-message-box {
+            background: #E8F5E9;
+            border: 2px solid #00C9A7;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 201, 167, 0.15);
+        }
+
+        .phone-icon { font-size: 1.8rem; }
+        .phone-text { font-size: 0.95rem; font-weight: 800; color: #059669; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #FFFFFF;
+            border: 3px solid #E2E8F0;
+            border-bottom: 6px solid #CBD5E1;
+            border-radius: 16px;
+            padding: 12px 14px;
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: #475569;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            outline: none;
+        }
+
+        .option-btn:hover:not(.locked) {
+            transform: translateY(-2px);
+            border-color: #A7F3D0;
+            background: #F0FDF4;
+        }
+
+        .option-btn:active:not(.locked) {
+            transform: translateY(2px);
+            border-bottom-width: 3px;
+        }
+
+        .option-prefix {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #F1F5F9;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .option-btn.selected {
+            background-color: var(--selected-color) !important;
+            border-color: var(--selected-color) !important;
+            border-bottom-color: var(--selected-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.selected .option-prefix {
+            background: rgba(255, 255, 255, 0.3);
+            color: #FFF;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color) !important;
+            border-color: var(--correct-color) !important;
+            border-bottom-color: var(--correct-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.correct .option-prefix { background: rgba(255, 255, 255, 0.3); color: #FFF; }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-color) !important;
+            border-color: var(--wrong-color) !important;
+            border-bottom-color: var(--wrong-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.wrong .option-prefix { background: rgba(255, 255, 255, 0.3); color: #FFF; }
+
+        .explanation-box {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #F0FDF4;
+            border: 2px dashed #00C9A7;
+            border-radius: 16px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .explanation-box.active { display: block; }
+
+        .explanation-title {
+            font-size: 0.98rem;
+            font-weight: 900;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #A7F3D0;
+            padding-bottom: 4px;
+        }
+
+        .exp-section { margin-bottom: 6px; font-size: 0.9rem; line-height: 1.5; }
+        .exp-section strong { color: #065F46; }
+
+        .exp-options-list { list-style: none; margin: 4px 0; padding-left: 6px; }
+        .exp-options-list li { margin-bottom: 3px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .submit-btn-container { text-align: center; margin: 10px 0 30px; }
+
+        .submit-btn {
+            background: linear-gradient(180deg, #FF7675 0%, #D63031 100%);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 900;
+            padding: 14px 34px;
+            border: none;
+            border-radius: 22px;
+            box-shadow: 0 7px 0 #B22222, 0 10px 18px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 9px 0 #B22222, 0 12px 22px rgba(0,0,0,0.25); }
+        .submit-btn:active { transform: translateY(3px); box-shadow: 0 4px 0 #B22222, 0 5px 8px rgba(0,0,0,0.2); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+
+        .modal-card {
+            background: #FFF;
+            border-radius: 26px;
+            padding: 28px 18px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 6px solid #FDCB6E;
+        }
+
+        .modal-icon { font-size: 3.5rem; margin-bottom: 6px; }
+        .modal-title { font-size: 1.4rem; font-weight: 900; color: #6C5CE7; margin-bottom: 6px; }
+        .score-display { font-size: 2.5rem; font-weight: 900; color: #00C9A7; margin: 8px 0; }
+        .feedback-text { font-size: 0.98rem; font-weight: 700; color: #2D3436; margin-bottom: 18px; line-height: 1.45; }
+
+        .modal-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+        .modal-btn {
+            border: none;
+            padding: 10px 18px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .modal-btn:hover { transform: translateY(-2px); }
+        .btn-view-all { background: #00C9A7; color: #FFF; box-shadow: 0 4px 0 #00A352; }
+        .btn-view-wrong { background: #FF7675; color: #FFF; box-shadow: 0 4px 0 #D63031; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Advanced Conditionals & Advanced Vocabulary Mastery Test</h1>
+            <div class="teacher-tag">Giáo viên tạo: Ms Ngoc Hai FTU</div>
+        </header>
+
+        <div class="stats-bar">
+            <span id="statsLabel">📝 Tiến độ hoàn thành bài thi</span>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span id="progressText">0/50</span>
+        </div>
+
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" id="btnFilterAll" onclick="filterQuestionsResult('all')">👁️ Xem toàn bộ bài thi (<span id="totalVisibleCount">50</span> câu)</button>
+            <button class="filter-btn" id="btnFilterWrong" onclick="filterQuestionsResult('wrong')">❌ Chỉ xem các câu làm sai (<span id="wrongCount">0</span>)</button>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="submit-btn-container" id="submitContainer">
+            <button class="submit-btn" id="submitBtn">🎉 Nộp Bài & Chấm Điểm</button>
+        </div>
+    </div>
+
+    <!-- Modal Score Popup -->
+    <div class="modal-overlay" id="scoreModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">🏆</div>
+            <div class="modal-title" id="modalTitle">Hoàn thành bài kiểm tra 50 câu!</div>
+            <div class="score-display" id="scoreDisplay">0/50</div>
+            <div class="feedback-text" id="feedbackText">Tuyệt vời!</div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-view-wrong" onclick="reviewWrongAnswers()">🔍 Xem câu làm sai</button>
+                <button class="modal-btn btn-view-all" onclick="reviewAllAnswers()">📖 Xem toàn bộ lời giải chi tiết</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                if (type === 'correct') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(250, now + 0.12);
+                    osc.frequency.setValueAtTime(200, now + 0.24);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) { console.log("Audio not supported"); }
+        }
+
+        const rawQuestionsData = [
+            // 1
+            {
+                typeLabel: "Multiple Choice",
+                q: "______ the drought continue, many agricultural regions will be forced to evacuate their livestock.",
+                options: ["Should", "Were", "Had", "Unless"],
+                answer: "Should",
+                exp: {
+                    translations: ["A. Should (Đảo ngữ loại 1)", "B. Were (Đảo ngữ loại 2)", "C. Had (Đảo ngữ loại 3)", "D. Unless: Trừ khi"],
+                    sentenceTrans: "Nếu chẳng may đợt hạn hán còn kéo dài, nhiều vùng nông nghiệp sẽ buộc phải sơ tán đàn gia súc.",
+                    whyCorrect: "Chọn A vì đây là Inverted First conditional (Đảo ngữ loại 1 trang trọng): Should + S + V-bare (continue).",
+                    whyWrong: "B (Were) dùng đảo ngữ loại 2 với to-V. C (Had) dùng cho loại 3. D (Unless) làm vế chính sai nghĩa."
+                }
+            },
+            // 2
+            {
+                typeLabel: "Gap Fill",
+                q: "<span class='gap-slot' id='gap-1'>[ ? ]</span> we to stop exploiting fossil fuels tomorrow, it would still take decades for the global environment to recover.",
+                options: ["Were", "Should", "Had", "If"],
+                answer: "Were",
+                gapId: "gap-1",
+                exp: {
+                    translations: ["A. Were (Đảo ngữ loại 2)", "B. Should (Đảo ngữ loại 1)", "C. Had (Đảo ngữ loại 3)", "D. If (Thường)"],
+                    sentenceTrans: "Giả sử nếu ngày mai chúng ta ngừng khai thác nhiên liệu hóa thạch, thì cũng phải mất nhiều thập kỷ môi trường toàn cầu mới phục hồi.",
+                    whyCorrect: "Chọn A vì đây là Inverted Second conditional (Đảo ngữ loại 2): Were + S + to-V (to stop) ..., S + would + V-bare.",
+                    whyWrong: "B đi với V-bare. C đi với V-p2. D thiếu 'were to' nếu dùng dạng If thường."
+                }
+            },
+            // 3
+            {
+                typeLabel: "Multiple Choice",
+                q: "______ Charles Darwin not visited the Galapagos Islands, he might never have developed his theory of evolution.",
+                options: ["Had", "Were", "Should", "If"],
+                answer: "Had",
+                exp: {
+                    translations: ["A. Had (Đảo ngữ loại 3)", "B. Were (Đảo ngữ loại 2)", "C. Should (Đảo ngữ loại 1)", "D. If (Điều kiện thường)"],
+                    sentenceTrans: "Nếu Charles Darwin không ghé thăm quần đảo Galapagos, ông ấy có lẽ đã không bao giờ phát triển được thuyết tiến hóa.",
+                    whyCorrect: "Chọn A vì đây là Inverted Third conditional (Đảo ngữ loại 3): Had + S + not + V-p2 (visited).",
+                    whyWrong: "B và C sai cấu trúc loại 3. D thiếu 'hadn't visited'."
+                }
+            },
+            // 4
+            {
+                typeLabel: "Gap Fill",
+                q: "Had the committee <span class='gap-slot' id='gap-2'>[ ? ]</span> attended the conference, they would have had no idea of the new environmental regulations.",
+                options: ["not", "no", "never", "don't"],
+                answer: "not",
+                gapId: "gap-2",
+                exp: {
+                    translations: ["A. not (trạng từ phủ định)", "B. no: không", "C. never: không bao giờ", "D. don't: không"],
+                    sentenceTrans: "Nếu ủy ban không tham dự hội nghị, họ đã hoàn toàn không hay biết gì về các quy định môi trường mới.",
+                    whyCorrect: "Chọn A vì trong đảo ngữ phủ định của câu điều kiện, từ 'not' đứng ngay sau chủ ngữ: Had + S + not + V-p2.",
+                    whyWrong: "B, C, D sai quy tắc vị trí từ phủ định trong đảo ngữ."
+                }
+            },
+            // 5
+            {
+                typeLabel: "Multiple Choice",
+                q: "______ it not for my loyal dog, I think I would feel quite lonely during the long quarantine.",
+                options: ["Were", "Had", "If", "But"],
+                answer: "Were",
+                exp: {
+                    translations: ["A. Were (Were it not for + N)", "B. Had (Had it not been for)", "C. If (If it weren't for)", "D. But (But for)"],
+                    sentenceTrans: "Nếu không nhờ có chú chó trung thành của tôi, tôi nghĩ mình sẽ cảm thấy rất cô đơn trong suốt đợt cách ly dài.",
+                    whyCorrect: "Chọn A vì đây là đảo ngữ loại 2: Were it not for + Noun, tương đương với If it weren't for + Noun.",
+                    whyWrong: "B dùng loại 3 phải có 'been for'. C thiếu 'it weren't'. D thiếu 'for'."
+                }
+            },
+            // 6
+            {
+                typeLabel: "Gap Fill",
+                q: "<span class='gap-slot' id='gap-3'>[ ? ]</span> for your timely intervention, the company wouldn't have been able to avoid financial bankruptcy.",
+                options: ["But", "Were", "Had", "Unless"],
+                answer: "But",
+                gapId: "gap-3",
+                exp: {
+                    translations: ["A. But (But for + N)", "B. Were: Nếu", "C. Had: Nếu", "D. Unless: Trừ khi"],
+                    sentenceTrans: "Nếu không nhờ có sự can thiệp kịp thời của bạn, công ty đã không thể tránh khỏi thảm họa phá sản tài chính.",
+                    whyCorrect: "Chọn A vì 'But for + N' = 'If it hadn't been for + N' (Nếu không nhờ có...).",
+                    whyWrong: "B, C, D thiếu các thành phần đi kèm để tạo thành cấu trúc với giới từ 'for'."
+                }
+            },
+            // 7
+            {
+                typeLabel: "Multiple Choice",
+                q: "Had it ______ for your detailed instructions, I would have made a catastrophic mistake on the exam.",
+                options: ["not been", "weren't", "not be", "hadn't been"],
+                answer: "not been",
+                exp: {
+                    translations: ["A. not been (Had it not been for)", "B. weren't: không phải", "C. not be: không là", "D. hadn't been: đã không là"],
+                    sentenceTrans: "Nếu không nhờ có sự hướng dẫn chi tiết của bạn, tôi đã mắc một sai lầm thảm họa trong bài thi rồi.",
+                    whyCorrect: "Chọn A vì đảo ngữ loại 3 có dạng cố định: Had it not been for + Noun.",
+                    whyWrong: "B, C, D không đúng cấu trúc đảo ngữ phủ định loại 3."
+                }
+            },
+            // 8
+            {
+                typeLabel: "Gap Fill",
+                q: "You might not be in so much trouble now if you <span class='gap-slot' id='gap-4'>[ ? ]</span> gambling all your savings last year.",
+                options: ["hadn't started", "didn't start", "don't start", "haven't started"],
+                answer: "hadn't started",
+                gapId: "gap-4",
+                exp: {
+                    translations: ["A. hadn't started (Past perfect)", "B. didn't start (Past simple)", "C. don't start (Present simple)", "D. haven't started (Present perfect)"],
+                    sentenceTrans: "Bây giờ bạn có lẽ đã không gặp nhiều rắc rối đến thế nếu năm ngoái bạn không đâm đầu vào cờ bạc.",
+                    whyCorrect: "Chọn A vì đây là Mixed conditional (Điều kiện hỗn hợp): Nguyên nhân giả định quá khứ (last year -> Hadn't + V-p2) dẫn đến kết quả hiện tại (now -> Might not be).",
+                    whyWrong: "B, C, D sai thì đối với mốc thời gian quá khứ 'last year'."
+                }
+            },
+            // 9
+            {
+                typeLabel: "Multiple Choice",
+                q: "We'll proceed with the outdoor concert this weekend as ______ as the weather remains clear.",
+                options: ["long", "far", "soon", "well"],
+                answer: "long",
+                exp: {
+                    translations: ["A. long (as long as: miễn là)", "B. far (as far as: theo như)", "C. soon (as soon as: ngay khi)", "D. well (as well as: cũng như)"],
+                    sentenceTrans: "Chúng tôi sẽ tiếp tục tổ chức buổi hòa nhạc ngoài trời cuối tuần này miễn là thời tiết tiếp tục quang đãng.",
+                    whyCorrect: "Chọn A vì 'as long as' (hoặc so long as) đóng vai trò là liên từ chỉ điều kiện mang nghĩa 'miễn là'.",
+                    whyWrong: "B, C, D không phải liên từ chỉ điều kiện thay thế cho If."
+                }
+            },
+            // 10
+            {
+                typeLabel: "Gap Fill",
+                q: "You can adopt a stray pet <span class='gap-slot' id='gap-5'>[ ? ]</span> that you promise to provide adequate food and shelter.",
+                options: ["provided", "unless", "otherwise", "in case"],
+                answer: "provided",
+                gapId: "gap-5",
+                exp: {
+                    translations: ["A. provided (provided that: với điều kiện là)", "B. unless: trừ khi", "C. otherwise: nếu không thì", "D. in case: phòng khi"],
+                    sentenceTrans: "Bạn có thể nhận nuôi một con thú cưng đi lang thang với điều kiện là bạn hứa cung cấp đủ thức ăn và chỗ ở cho nó.",
+                    whyCorrect: "Chọn A vì 'provided (that)' hoặc 'providing (that)' là cấu trúc chỉ điều kiện.",
+                    whyWrong: "B mang nghĩa phủ định 'trừ khi'. C đứng trước mệnh đề kết quả. D chỉ sự phòng ngừa."
+                }
+            },
+            // 11
+            {
+                typeLabel: "Multiple Choice",
+                q: "Applications for the scholarship are accepted ______ condition that applicants achieve an IELTS score above 7.5.",
+                options: ["on", "in", "at", "under"],
+                answer: "on",
+                exp: {
+                    translations: ["A. on (on condition that: với điều kiện)", "B. in: trong", "C. at: tại", "D. under: dưới"],
+                    sentenceTrans: "Đơn xin học bổng được chấp nhận với điều kiện người nộp đơn đạt điểm IELTS trên 7.5.",
+                    whyCorrect: "Chọn A vì cụm từ cố định trang trọng chỉ điều kiện là 'on condition (that)'.",
+                    whyWrong: "B, C, D sai giới từ chuẩn của cụm từ."
+                }
+            },
+            // 12
+            {
+                typeLabel: "Gap Fill",
+                q: "______ the global price of oil tripled tomorrow, what impact do you think it would have on agriculture?",
+                options: ["Supposing", "Provided", "Unless", "Long"],
+                answer: "Supposing",
+                gapId: "gap-6",
+                exp: {
+                    translations: ["A. Supposing: Giả sử như", "B. Provided: Với điều kiện", "C. Unless: Trừ khi", "D. Long: Dài"],
+                    sentenceTrans: "Giả sử giá dầu toàn cầu tăng gấp ba vào ngày mai, bạn nghĩ nó sẽ có tác động gì đến ngành nông nghiệp?",
+                    whyCorrect: "Chọn A vì 'Suppose' hoặc 'Supposing' đứng đầu câu đưa ra một tình huống giả định tưởng tượng.",
+                    whyWrong: "B thiếu 'that'. C sai nghĩa. D không phù hợp ngữ pháp."
+                }
+            },
+            {
+                typeLabel: "Multiple Choice",
+                q: "You should have your vehicle serviced regularly, ______ you'll waste a substantial amount of fuel.",
+                options: ["otherwise", "unless", "provided", "in case"],
+                answer: "otherwise",
+                exp: {
+                    translations: ["A. otherwise: nếu không thì", "B. unless: trừ khi", "C. provided: miễn là", "D. in case: phòng khi"],
+                    sentenceTrans: "Bạn nên cho bảo dưỡng xe thường xuyên, nếu không thì bạn sẽ lãng phí một lượng nhiên liệu đáng kể đấy.",
+                    whyCorrect: "Chọn A vì 'otherwise' dùng để nối câu chỉ hậu quả tiêu cực nếu hành động trước không được thực hiện.",
+                    whyWrong: "B, C, D sai vai trò ngữ pháp và ý nghĩa kết nối mệnh đề."
+                }
+            },
+            // 14
+            {
+                typeLabel: "Gap Fill",
+                q: "<span class='gap-slot' id='gap-7'>[ ? ]</span> governments take immediate action against global warming, ecosystems will continue to degrade.",
+                options: ["Unless", "If", "Provided", "As long as"],
+                answer: "Unless",
+                gapId: "gap-7",
+                exp: {
+                    translations: ["A. Unless: Trừ khi (= If ... not)", "B. If: Nếu", "C. Provided: Miễn là", "D. As long as: Miễn là"],
+                    sentenceTrans: "Trừ khi các chính phủ hành động ngay lập tức chống lại sự nóng lên toàn cầu, các hệ sinh thái sẽ tiếp tục suy thoái.",
+                    whyCorrect: "Chọn A vì 'Unless' = 'If ... don't'. Câu mang nghĩa: 'Nếu các chính phủ KHÔNG hành động...'.",
+                    whyWrong: "B, C, D làm câu mang nghĩa trái ngược thực tế."
+                }
+            },
+            // 15
+            {
+                typeLabel: "Multiple Choice",
+                q: "Always carry an emergency kit with you in ______ the natural disaster escalates unexpectedly.",
+                options: ["case", "condition", "fact", "order"],
+                answer: "case",
+                exp: {
+                    translations: ["A. case (in case: phòng khi)", "B. condition: điều kiện", "C. fact: sự thật", "D. order: thứ tự"],
+                    sentenceTrans: "Hãy luôn mang theo bộ dụng cụ khẩn cấp bên mình phòng khi thảm họa thiên nhiên leo thang bất ngờ.",
+                    whyCorrect: "Chọn A vì cụm 'in case + clause' diễn tả sự chuẩn bị phòng ngừa trước một sự cố.",
+                    whyWrong: "B, C, D không tạo thành cụm chỉ sự phòng bị."
+                }
+            },
+            // 16
+            {
+                typeLabel: "Gap Fill",
+                q: "In case of severe <span class='gap-slot' id='gap-8'>[ ? ]</span>, residents must evacuate the coastal region without delay.",
+                options: ["flooding", "it floods", "flooded", "floods"],
+                answer: "flooding",
+                gapId: "gap-8",
+                exp: {
+                    translations: ["A. flooding (n): nạn ngập lụt", "B. it floods: nó lụt", "C. flooded (adj): bị lụt", "D. floods (v): ngập lụt"],
+                    sentenceTrans: "Trong trường hợp xảy ra ngập lụt nghiêm trọng, cư dân phải sơ tán khỏi vùng duyên hải không chậm trễ.",
+                    whyCorrect: "Chọn A vì sau cụm giới từ 'In case of' bắt buộc phải dùng một Danh từ/Danh động từ (flooding).",
+                    whyWrong: "B, C, D không phải danh từ thích hợp sau giới từ."
+                }
+            },
+            // 17
+            {
+                typeLabel: "Multiple Choice",
+                q: "Are you interested in environmental conservation? If ______, you should consider volunteering for Greenpeace.",
+                options: ["so", "not", "it", "true"],
+                answer: "so",
+                exp: {
+                    translations: ["A. so (If so: Nếu đúng như vậy)", "B. not: không", "C. it: nó", "D. true: đúng"],
+                    sentenceTrans: "Bạn có quan tâm đến việc bảo tồn môi trường không? Nếu có, bạn nên cân nhắc làm tình nguyện viên cho Greenpeace.",
+                    whyCorrect: "Chọn A vì 'If so' là dạng rút gọn mệnh đề khẳng định phía trước ('If you are interested...').",
+                    whyWrong: "B (If not) dùng cho phủ định. C, D sai dạng rút gọn."
+                }
+            },
+            // 18
+            {
+                typeLabel: "Gap Fill",
+                q: "If you <span class='gap-slot' id='gap-9'>[ ? ]</span> happen to see Davina in town, ask her whether she would look after our pets this weekend.",
+                options: ["should", "would", "were", "had"],
+                answer: "should",
+                gapId: "gap-9",
+                exp: {
+                    translations: ["A. should (nhấn mạnh sự tình cờ)", "B. would: sẽ", "C. were: là", "D. had: đã"],
+                    sentenceTrans: "Nếu bạn có vô tình gặp Davina ở thị trấn, hãy hỏi cô ấy xem liệu cô ấy có thể chăm sóc thú cưng giúp chúng ta cuối tuần này không.",
+                    whyCorrect: "Chọn A vì cấu trúc 'If + S + should happen to + V' nhấn mạnh sự tình cờ ngẫu nhiên trong điều kiện loại 1.",
+                    whyWrong: "B, C, D không đứng trước 'happen to V' trong cấu trúc này."
+                }
+            },
+            // 19
+            {
+                typeLabel: "Multiple Choice",
+                q: "Do you think it would reduce urban air pollution if the government ______ to introduce a heavy carbon tax?",
+                options: ["were", "had", "should", "would"],
+                answer: "were",
+                exp: {
+                    translations: ["A. were (If ... were to V)", "B. had: đã", "C. should: nên", "D. would: sẽ"],
+                    sentenceTrans: "Bạn có nghĩ nó sẽ làm giảm ô nhiễm không khí đô thị nếu chính phủ áp dụng một khoản thuế carbon nặng không?",
+                    whyCorrect: "Chọn A vì cấu trúc giả định trang trọng loại 2: If + S + were to + V-bare.",
+                    whyWrong: "B, C, D sai cấu trúc câu giả định trang trọng với 'to V'."
+                }
+            },
+            // 20
+            {
+                typeLabel: "Gap Fill",
+                q: "If you <span class='gap-slot' id='gap-10'>[ ? ]</span> follow me, I'll show you into the park manager's office right away.",
+                options: ["will", "would have", "had", "were to"],
+                answer: "will",
+                gapId: "gap-10",
+                exp: {
+                    translations: ["A. will (If you will...: Nếu bạn sẵn lòng)", "B. would have: đã sẽ", "C. had: đã", "D. were to: giả sử"],
+                    sentenceTrans: "Nếu quý vị sẵn lòng đi theo tôi, tôi sẽ dẫn quý vị vào phòng quản lý công viên ngay lập tức.",
+                    whyCorrect: "Chọn A vì đây là cách dùng đặc biệt của 'If' mang nghĩa lịch sự 'If you are willing to...' (Xin vui lòng / Nếu bạn sẵn lòng...).",
+                    whyWrong: "B, C, D không mang nghĩa lịch sự 'sẵn lòng làm gì'."
+                }
+            },
+            // 21
+            {
+                typeLabel: "Multiple Choice",
+                q: "Scientists fear that unchecked deforestation could kill ______ many endangered rainforest species.",
+                options: ["off", "up", "down", "out"],
+                answer: "off",
+                exp: {
+                    translations: ["A. off (kill off: tiêu diệt hoàn toàn)", "B. up: lên", "C. down: xuống", "D. out: ra ngoài"],
+                    sentenceTrans: "Các nhà khoa học lo ngại rằng nạn phá rừng không kiểm soát có thể tiêu diệt hoàn toàn nhiều loài rừng nhiệt đới đang gặp nguy hiểm.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'kill off' nghĩa là tiêu diệt diệt vong hàng loạt.",
+                    whyWrong: "B, C, D không ghép với 'kill' mang nghĩa tuyệt chủng."
+                }
+            },
+            // 22
+            {
+                typeLabel: "Gap Fill",
+                q: "After weeks of careful investigation, detective Smith managed to dig <span class='gap-slot' id='gap-11'>[ ? ]</span> crucial evidence regarding the crime.",
+                options: ["up", "out", "off", "through"],
+                answer: "up",
+                gapId: "gap-11",
+                exp: {
+                    translations: ["A. up (dig up: khai quật, điều tra ra)", "B. out: ra ngoài", "C. off: rời đi", "D. through: xuyên qua"],
+                    sentenceTrans: "Sau nhiều tuần điều tra cẩn thận, thám tử Smith đã tìm ra/đào xới lên được bằng chứng quan trọng liên quan đến vụ án.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'dig up' nghĩa là tìm ra thông tin bí mật qua điều tra hoặc đào từ lòng đất lên.",
+                    whyWrong: "B, C, D sai giới từ chuẩn."
+                }
+            },
+            // 23
+            {
+                typeLabel: "Multiple Choice",
+                q: "While exploring the ancient library, the researcher chanced ______ a rare manuscript about indigenous medicine.",
+                options: ["upon", "down", "through", "off"],
+                answer: "upon",
+                exp: {
+                    translations: ["A. upon (chance upon: tình cờ bắt gặp)", "B. down: xuống", "C. through: qua", "D. off: tắt"],
+                    sentenceTrans: "Trong lúc khám phá thư viện cổ, nhà nghiên cứu đã vô tình tình cờ tìm thấy một bản thảo hiếm về y học bản địa.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'chance upon' nghĩa là vô tình tình cờ phát hiện ra.",
+                    whyWrong: "B, C, D sai giới từ đi kèm 'chance'."
+                }
+            },
+            // 24
+            {
+                typeLabel: "Gap Fill",
+                q: "Global environmental organizations are urging heavy industries to cut <span class='gap-slot' id='gap-12'>[ ? ]</span> on their greenhouse emissions.",
+                options: ["back", "off", "down", "away"],
+                answer: "back",
+                gapId: "gap-12",
+                exp: {
+                    translations: ["A. back (cut back on: cắt giảm)", "B. off: cắt đứt", "C. down: chặt hạ", "D. away: đi xa"],
+                    sentenceTrans: "Các tổ chức môi trường toàn cầu đang thúc giục các ngành công nghiệp nặng cắt giảm lượng khí thải nhà kính.",
+                    whyCorrect: "Chọn A vì 'cut back (on sth)' nghĩa là giảm bớt chi tiêu hoặc lượng tiêu thụ.",
+                    whyWrong: "B (cut off) là cô lập. C (cut down) là chặt cây."
+                }
+            },
+            // 25
+            {
+                typeLabel: "Multiple Choice",
+                q: "It was pure ______ that two researchers from different continents arrived at the exact same scientific discovery simultaneously.",
+                options: ["coincidence", "mishap", "drought", "greenery"],
+                answer: "coincidence",
+                exp: {
+                    translations: ["A. coincidence (n): sự trùng hợp ngẫu nhiên", "B. mishap (n): sự cố rủi ro", "C. drought (n): hạn hán", "D. greenery (n): cây xanh"],
+                    sentenceTrans: "Đó hoàn toàn là sự trùng hợp ngẫu nhiên khi hai nhà nghiên cứu từ các châu lục khác nhau cùng đạt được một phát minh khoa học tại một thời điểm.",
+                    whyCorrect: "Chọn A vì 'pure coincidence' chỉ sự trùng hợp ngẫu nhiên đầy bất ngờ.",
+                    whyWrong: "B (mishap) là tai nạn nhỏ. C (drought) là hạn hán. D (greenery) là cây xanh."
+                }
+            },
+            // 26
+            {
+                typeLabel: "Gap Fill",
+                q: "The meteorologist decided to put the unexpected climate shift <span class='gap-slot' id='gap-13'>[ ? ]</span> to global warming trends.",
+                options: ["down to", "up for", "off with", "through by"],
+                answer: "down to",
+                gapId: "gap-13",
+                exp: {
+                    translations: ["A. down to (put sth down to: quy nguyên nhân cho)", "B. up for: sẵn sàng", "C. off with: rời đi", "D. through by: bởi"],
+                    sentenceTrans: "Nhà khí tượng học đã quyết định quy sự biến đổi khí hậu bất ngờ là do xu hướng nóng lên toàn cầu.",
+                    whyCorrect: "Chọn A vì cụm thành ngữ 'put sth down to sth' nghĩa là cho rằng việc gì là do nguyên nhân gì.",
+                    whyWrong: "B, C, D sai giới từ thành ngữ."
+                }
+            },
+            // 27
+            {
+                typeLabel: "Multiple Choice",
+                q: "The hiking trail began to ______ through the mountainous valley, offering breathtaking views of the river.",
+                options: ["meander", "mutate", "transpire", "wobble"],
+                answer: "meander",
+                exp: {
+                    translations: ["A. meander (v): uốn lượn ngoằn ngoèo", "B. mutate (v): đột biến", "C. transpire (v): diễn ra", "D. wobble (v): lung lay"],
+                    sentenceTrans: "Con đường mòn bắt đầu uốn lượn ngoằn ngoèo qua thung lũng núi, mang lại tầm nhìn tuyệt đẹp ra dòng sông.",
+                    whyCorrect: "Chọn A vì 'meander' miêu tả đường đi hoặc con sông uốn lượn quanh co.",
+                    whyWrong: "B (mutate) là đột biến gen. C (transpire) là vỡ lở. D (wobble) là lảo đảo."
+                }
+            },
+            // 28
+            {
+                typeLabel: "Gap Fill",
+                q: "Without active preservation efforts, ancient dialect languages are likely to die <span class='gap-slot' id='gap-14'>[ ? ]</span> completely in the next generation.",
+                options: ["out", "off", "down", "up"],
+                answer: "out",
+                gapId: "gap-14",
+                exp: {
+                    translations: ["A. out (die out: tuyệt chủng, biến mất dần)", "B. off: chết dần", "C. down: dịu lại", "D. up: lớn lên"],
+                    sentenceTrans: "Nếu không có các nỗ lực bảo tồn tích cực, các tiếng địa phương cổ có khả năng sẽ biến mất hoàn toàn trong thế hệ tới.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'die out' dùng cho ngôn ngữ, phong tục hoặc loài vật bị tuyệt chủng/mai một.",
+                    whyWrong: "B, C, D sai nghĩa Phrasal verb."
+                }
+            },
+            // 29
+            {
+                typeLabel: "Multiple Choice",
+                q: "Due to rapid urbanization, modern skyscrapers are beginning to ______ up all over the metropolitan area.",
+                options: ["spring", "store", "throw", "slip"],
+                answer: "spring",
+                exp: {
+                    translations: ["A. spring (spring up: mọc lên nhanh chóng)", "B. store: tích trữ", "C. throw: nôn/vứt", "D. slip: sơ suất"],
+                    sentenceTrans: "Do đô thị hóa nhanh chóng, các tòa nhà cao tầng hiện đại đang bắt đầu mọc lên như nấm khắp khu vực đô thị.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'spring up' nghĩa là mọc lên/xuất hiện rất nhanh.",
+                    whyWrong: "B (store up) là tích trữ. C (throw up) là nôn. D (slip up) là trượt chân."
+                }
+            },
+            // 30
+            {
+                typeLabel: "Gap Fill",
+                q: "Residents in coastal zones are advised to store <span class='gap-slot' id='gap-15'>[ ? ]</span> essential supplies in preparation for the upcoming hurricane.",
+                options: ["up", "out", "off", "down"],
+                answer: "up",
+                gapId: "gap-15",
+                exp: {
+                    translations: ["A. up (store up: tích trữ dự phòng)", "B. out: ra ngoài", "C. off: tắt", "D. down: xuống"],
+                    sentenceTrans: "Cư dân ở vùng duyên hải được khuyên nên tích trữ các nhu yếu phẩm cần thiết để chuẩn bị cho trận cơn bão bão lớn sắp tới.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'store up' nghĩa là tích trữ lương thực/đồ đạc để dùng khi khẩn cấp.",
+                    whyWrong: "B, C, D sai giới từ."
+                }
+            },
+            // 31
+            {
+                typeLabel: "Multiple Choice",
+                q: "His decision to abandon his corporate career and move to a remote island was entirely ______, surprising all his colleagues.",
+                options: ["spontaneous", "haphazard", "inadvertent", "deliberate"],
+                answer: "spontaneous",
+                exp: {
+                    translations: ["A. spontaneous (adj): tự phát, ngẫu hứng", "B. haphazard (adj): bừa bãi", "C. inadvertent (adj): vô tình", "D. deliberate (adj): cố ý"],
+                    sentenceTrans: "Quyết định từ bỏ sự nghiệp doanh nghiệp để chuyển đến một hòn đảo hẻo lánh của anh ấy hoàn toàn là ngẫu hứng bộc phát, làm kinh ngạc toàn bộ đồng nghiệp.",
+                    whyCorrect: "Chọn A vì 'spontaneous' chỉ hành động bộc phát ngẫu hứng không được tính toán từ trước.",
+                    whyWrong: "B (haphazard) là lộn xộn. C (inadvertent) là sơ ý. D (deliberate) là cố tình."
+                }
+            },
+            // 32
+            {
+                typeLabel: "Gap Fill",
+                q: "Biologists discovered that exposure to harsh chemical radiation caused the cell structure to <span class='gap-slot' id='gap-16'>[ ? ]</span> rapidly.",
+                options: ["mutate", "meander", "transpire", "wobble"],
+                answer: "mutate",
+                gapId: "gap-16",
+                exp: {
+                    translations: ["A. mutate (v): biến đổi gen, đột biến", "B. meander: uốn lượn", "C. transpire: vỡ lở", "D. wobble: lảo đảo"],
+                    sentenceTrans: "Các nhà sinh học phát hiện ra rằng việc tiếp xúc với bức xạ hóa chất độc hại đã khiến cấu trúc tế bào đột biến nhanh chóng.",
+                    whyCorrect: "Chọn A vì 'mutate' là thuật ngữ sinh học chỉ sự biến đổi đột biến gen.",
+                    whyWrong: "B (meander) là ngoằn ngoèo. C (transpire) là diễn ra. D (wobble) là rung lắc."
+                }
+            },
+            // 33
+            {
+                typeLabel: "Multiple Choice",
+                q: "After experiencing four consecutive crop failures due to extreme weather, the local farmers felt completely ______.",
+                options: ["jinxed", "haphazard", "spontaneous", "instrumental"],
+                answer: "jinxed",
+                exp: {
+                    translations: ["A. jinxed (adj): xui xẻo, trúng lời nguyền", "B. haphazard: bừa bãi", "C. spontaneous: ngẫu hứng", "D. instrumental: quan trọng"],
+                    sentenceTrans: "Sau khi trải qua bốn vụ mùa thất thu liên tiếp do thời tiết khắc nghiệt, những người nông dân địa phương cảm thấy mình hoàn toàn bị xui xẻo.",
+                    whyCorrect: "Chọn A vì 'jinxed' miêu tả tình trạng liên tục gặp vận xui như bị trúng lời nguyền.",
+                    whyWrong: "B, C, D không mang nghĩa xui xẻo liên tiếp."
+                }
+            },
+            // 34
+            {
+                typeLabel: "Gap Fill",
+                q: "Her groundbreaking research paper was <span class='gap-slot' id='gap-17'>[ ? ]</span> in altering the international policy on ocean pollution.",
+                options: ["instrumental", "inadvertent", "haphazard", "spontaneous"],
+                answer: "instrumental",
+                gapId: "gap-17",
+                exp: {
+                    translations: ["A. instrumental (be instrumental in: đóng vai trò chủ chốt)", "B. inadvertent: vô tình", "C. haphazard: bừa bãi", "D. spontaneous: tự phát"],
+                    sentenceTrans: "Bài báo nghiên cứu mang tính đột phá của cô ấy đã đóng vai trò quyết định chủ chốt trong việc thay đổi chính sách quốc tế về ô nhiễm đại dương.",
+                    whyCorrect: "Chọn A vì 'be instrumental in doing sth' nghĩa là đóng vai trò cực kỳ quan trọng giúp tạo ra kết quả.",
+                    whyWrong: "B, C, D không có cấu trúc kết hợp này."
+                }
+            },
+            // 35
+            {
+                typeLabel: "Multiple Choice",
+                q: "Against all the ______, the inexperienced rescue team successfully located the trapped hikers in the blizzard.",
+                options: ["odds", "signs", "blows", "curses"],
+                answer: "odds",
+                exp: {
+                    translations: ["A. odds (against all the odds: vượt qua mọi nghịch cảnh/rủi ro)", "B. signs: dấu hiệu", "C. blows: cú đòn", "D. curses: lời nguyền"],
+                    sentenceTrans: "Vượt qua mọi tỷ lệ nghịch cảnh rủi ro, đội cứu hộ thiếu kinh nghiệm đã tìm thấy thành công những người đi bộ bị mắc kẹt trong bão tuyết.",
+                    whyCorrect: "Chọn A vì thành ngữ 'against all (the) odds' có nghĩa là vượt qua nghịch cảnh khả năng thành công cực thấp.",
+                    whyWrong: "B, C, D không ghép tạo thành cụm thành ngữ này."
+                }
+            },
+            // 36
+            {
+                typeLabel: "Gap Fill",
+                q: "The news anchor made a careless slip <span class='gap-slot' id='gap-18'>[ ? ]</span> on live television, revealing confidential government election details.",
+                options: ["up", "out", "off", "down"],
+                answer: "up",
+                gapId: "gap-18",
+                exp: {
+                    translations: ["A. up (slip up: lỡ lời, mắc sơ suất)", "B. out: ra ngoài", "C. off: rời", "D. down: xuống"],
+                    sentenceTrans: "Phát thanh viên truyền hình đã mắc một sơ suất lỡ lời trên sóng trực tiếp, tiết lộ các chi tiết bầu cử mật của chính phủ.",
+                    whyCorrect: "Chọn A vì 'slip up' (hoặc danh từ slip-up) nghĩa là mắc lỗi sơ suất ngớ ngẩn do bất cẩn.",
+                    whyWrong: "B, C, D không ghép với 'slip' mang nghĩa lỡ lời."
+                }
+            },
+            // 37
+            {
+                typeLabel: "Multiple Choice",
+                q: "During the Senate hearing, it finally ______ that top officials had concealed reports on industrial water contamination.",
+                options: ["transpired", "meandered", "mutated", "wobbled"],
+                answer: "transpired",
+                exp: {
+                    translations: ["A. transpired (it transpired that: vỡ lở/hóa ra là)", "B. meandered: uốn lượn", "C. mutated: đột biến", "D. wobbled: nghiêng ngả"],
+                    sentenceTrans: "Trong phiên điều chỉnh của Thượng viện, cuối cùng người ta mới vỡ lở ra rằng các quan chức cấp cao đã che giấu các báo cáo về sự ô nhiễm nước công nghiệp.",
+                    whyCorrect: "Chọn A vì cấu trúc 'It transpired that + clause' dùng khi bí mật bị vỡ lở ra ánh sáng.",
+                    whyWrong: "B, C, D không đi với giả định vỡ lở sự thật."
+                }
+            },
+            // 38
+            {
+                typeLabel: "Gap Fill",
+                q: "Financial analysts can only <span class='gap-slot' id='gap-19'>[ ? ]</span> on the long-term economic consequences of the sudden currency devaluation.",
+                options: ["speculate", "ascribe", "assign", "determine"],
+                answer: "speculate",
+                gapId: "gap-19",
+                exp: {
+                    translations: ["A. speculate (speculate on/about: phỏng đoán)", "B. ascribe (ascribe to: quy cho)", "C. assign: phân công", "D. determine: xác định"],
+                    sentenceTrans: "Các chuyên gia phân tích tài chính chỉ có thể suy đoán về các hậu quả kinh tế lâu dài của việc phá giá tiền tệ đột ngột.",
+                    whyCorrect: "Chọn A vì 'speculate on/about sth' nghĩa là suy đoán phỏng đoán không chắc chắn.",
+                    whyWrong: "B đi với giới từ 'to'. C (assign) đi với tân ngữ. D (determine) là xác định chắc chắn."
+                }
+            },
+            // 39
+            {
+                typeLabel: "Multiple Choice",
+                q: "Agricultural experts attribute the record-breaking harvest to the widespread adoption of modern sustainable ______.",
+                options: ["agriculture", "superstition", "catastrophe", "hazard"],
+                answer: "agriculture",
+                exp: {
+                    translations: ["A. agriculture (n): ngành nông nghiệp", "B. superstition (n): mê tín", "C. catastrophe (n): thảm họa", "D. hazard (n): mối nguy hiểm"],
+                    sentenceTrans: "Các chuyên gia nông nghiệp quy mùa màng bội thu kỷ lục là nhờ việc áp dụng rộng rãi ngành nông nghiệp bền vững hiện đại.",
+                    whyCorrect: "Chọn A vì 'sustainable agriculture' nghĩa là nền nông nghiệp bền vững.",
+                    whyWrong: "B (superstition) là mê tín. C (catastrophe) là thảm họa. D (hazard) là mối nguy."
+                }
+            },
+            // 40
+            {
+                typeLabel: "Gap Fill",
+                q: "The prolonged heatwave has severely depleted local water <span class='gap-slot' id='gap-20'>[ ? ]</span>, threatening both crops and livestock.",
+                options: ["resources", "species", "instincts", "charities"],
+                answer: "resources",
+                gapId: "gap-20",
+                exp: {
+                    translations: ["A. resources (water resources: nguồn tài nguyên nước)", "B. species: loài", "C. instincts: bản năng", "D. charities: từ thiện"],
+                    sentenceTrans: "Đợt nắng nóng kéo dài đã làm cạn kiệt nghiêm trọng các nguồn tài nguyên nước địa phương, đe dọa cả mùa màng lẫn gia súc.",
+                    whyCorrect: "Chọn A vì 'water resources' nghĩa là các nguồn tài nguyên nước.",
+                    whyWrong: "B (species) là loài sinh học. C (instincts) là bản năng. D (charities) là từ thiện."
+                }
+            },
+            // 41
+            {
+                typeLabel: "Multiple Choice",
+                q: "Global warming is blamed for accelerating the rate at which endangered species of wildlife die ______.",
+                options: ["out", "off", "down", "up"],
+                answer: "out",
+                exp: {
+                    translations: ["A. out (die out: tuyệt chủng)", "B. off: chết dần", "C. down: dịu đi", "D. up: lớn lên"],
+                    sentenceTrans: "Sự nóng lên toàn cầu bị đổ lỗi là làm đẩy nhanh tốc độ các loài động vật hoang dã nguy cấp bị tuyệt chủng.",
+                    whyCorrect: "Chọn A vì 'die out' nghĩa là loài sinh vật bị tuyệt chủng biến mất hoàn toàn.",
+                    whyWrong: "B, C, D không đúng Phrasal verb mang nghĩa tuyệt chủng."
+                }
+            },
+            // 42
+            {
+                typeLabel: "Gap Fill",
+                q: "If the government were to enact stricter conservation laws, it could <span class='gap-slot' id='gap-21'>[ ? ]</span> back on illegal deforestation significantly.",
+                options: ["cut", "break", "take", "bring"],
+                answer: "cut",
+                gapId: "gap-21",
+                exp: {
+                    translations: ["A. cut (cut back on: cắt giảm)", "B. break: phá vỡ", "C. take: tiếp quản", "D. bring: mang lại"],
+                    sentenceTrans: "Nếu chính phủ ban hành các luật bảo tồn nghiêm ngặt hơn, nó có thể cắt giảm nạn phá rừng trái phép một cách đáng kể.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'cut back on sth' nghĩa là cắt giảm bớt số lượng/hành vi.",
+                    whyWrong: "B, C, D không ghép với 'back on' chỉ sự cắt giảm."
+                }
+            },
+            // 43
+            {
+                typeLabel: "Multiple Choice",
+                q: "The sudden occurrence of a violent hurricane in this region was described as a natural ______ of unmitigated scale.",
+                options: ["catastrophe", "greenery", "coincidence", "mishap"],
+                answer: "catastrophe",
+                exp: {
+                    translations: ["A. catastrophe (n): thảm họa lớn", "B. greenery (n): cây xanh", "C. coincidence (n): sự trùng hợp", "D. mishap (n): sự cố rủi ro nhỏ"],
+                    sentenceTrans: "Sự xuất hiện đột ngột của cơn bão cuồng phong dữ dội trong khu vực này được mô tả như một thảm họa tự nhiên với quy mô chưa từng giảm bớt.",
+                    whyCorrect: "Chọn A vì 'natural catastrophe' chỉ thảm họa thiên nhiên thảm khốc.",
+                    whyWrong: "B (greenery) là mảng xanh. C (coincidence) là sự trùng hợp. D (mishap) là sự cố rủi ro nhẹ."
+                }
+            },
+            // 44
+            {
+                typeLabel: "Gap Fill",
+                q: "Should the temperature continue to heat <span class='gap-slot' id='gap-22'>[ ? ]</span>, glaciers in the polar regions will melt at an alarming speed.",
+                options: ["up", "out", "off", "down"],
+                answer: "up",
+                gapId: "gap-22",
+                exp: {
+                    translations: ["A. up (heat up: nóng lên)", "B. out: ra ngoài", "C. off: tắt", "D. down: xuống"],
+                    sentenceTrans: "Nếu nhiệt độ tiếp tục nóng lên, các băng đảo ở hai cực sẽ tan chảy với tốc độ đáng báo động.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'heat up' nghĩa là gia tăng nhiệt độ, nóng lên.",
+                    whyWrong: "B, C, D không ghép với 'heat' mang nghĩa nóng lên."
+                }
+            },
+            // 45
+            {
+                typeLabel: "Multiple Choice",
+                q: "High-level negotiations failed because neither delegation was willing to ______ their demands on carbon reduction targets.",
+                options: ["cut back", "moderate", "speculate", "rehearse"],
+                answer: "cut back",
+                exp: {
+                    translations: ["A. cut back: cắt giảm bớt", "B. moderate: điều tiết", "C. speculate: phỏng đoán", "D. rehearse: diễn tập"],
+                    sentenceTrans: "Các cuộc đàm phán cấp cao đã thất bại vì không phái đoàn nào chịu cắt giảm bớt các yêu cầu về mục tiêu giảm thiểu carbon của mình.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'cut back' chỉ sự cắt giảm giảm bớt chỉ tiêu.",
+                    whyWrong: "B, C, D không mang nghĩa cắt giảm chỉ tiêu đàm phán."
+                }
+            },
+            // 46
+            {
+                typeLabel: "Gap Fill",
+                q: "Were it not for the heavy rainfall last week, the local reservoirs would have dried <span class='gap-slot' id='gap-23'>[ ? ]</span> completely during the summer.",
+                options: ["up", "out", "off", "away"],
+                answer: "up",
+                gapId: "gap-23",
+                exp: {
+                    translations: ["A. up (dry up: cạn khô)", "B. out: ra ngoài", "C. off: tắt", "D. away: xa"],
+                    sentenceTrans: "Nếu không nhờ có trận mưa lớn tuần trước, các hồ chứa nước địa phương chắc chắn đã cạn khô hoàn toàn trong suốt mùa hè.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'dry up' dùng cho sông hố nguồn nước nghĩa là bị cạn kiệt nước hoàn toàn.",
+                    whyWrong: "B, C, D không dùng cho nguồn nước bị cạn khô."
+                }
+            },
+            // 47
+            {
+                typeLabel: "Multiple Choice",
+                q: "Ancient civilizations developed sophisticated cooling techniques using only local ______ materials.",
+                options: ["indigenous", "haphazard", "inadvertent", "jinxed"],
+                answer: "indigenous",
+                exp: {
+                    translations: ["A. indigenous (adj): bản địa, tự nhiên tại chỗ", "B. haphazard: bừa bãi", "C. inadvertent: vô tình", "D. jinxed: xui xẻo"],
+                    sentenceTrans: "Các văn minh cổ đại đã phát triển các kỹ thuật làm mát tinh vi chỉ bằng cách sử dụng các vật liệu bản địa địa phương.",
+                    whyCorrect: "Chọn A vì 'indigenous materials' nghĩa là các vật liệu tự nhiên vốn có tại địa phương.",
+                    whyWrong: "B (haphazard) lộn xộn. C (inadvertent) vô ý. D (jinxed) xui xẻo."
+                }
+            },
+            // 48
+            {
+                typeLabel: "Gap Fill",
+                q: "Had the company implemented green energy practices, it wouldn't have thrown <span class='gap-slot' id='gap-24'>[ ? ]</span> so much recyclable material into landfills.",
+                options: ["out", "up", "off", "down"],
+                answer: "out",
+                gapId: "gap-24",
+                exp: {
+                    translations: ["A. out (throw out: vứt bỏ)", "B. up: nôn mửa", "C. off: tắt", "D. down: xuống"],
+                    sentenceTrans: "Nếu công ty thực hiện các thực hành năng lượng xanh, họ đã không vứt bỏ nhiều vật liệu tái chế ra bãi rác đến thế.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'throw out' nghĩa là loại bỏ vứt rác đồ dư thừa.",
+                    whyWrong: "B (throw up) là nôn. C, D sai Phrasal verb."
+                }
+            },
+            // 49
+            {
+                typeLabel: "Visual Q49",
+                q: "Look at the clearance advertisement sign above. The manager announced: 'If you ______ happen to find any defective eco-products, return them to the desk.'",
+                options: ["should", "were", "had", "would"],
+                answer: "should",
+                hasCustomVisual: "saleSign",
+                exp: {
+                    translations: ["A. should (If ... should happen to V: Nếu vô tình)", "B. were: là", "C. had: đã", "D. would: sẽ"],
+                    sentenceTrans: "Hãy nhìn vào biển thông báo giảm giá ở trên. Quản lý thông báo: 'Nếu quý khách vô tình tìm thấy bất kỳ sản phẩm sinh thái nào bị lỗi, xin vui lòng trả lại quầy.'",
+                    whyCorrect: "Chọn A vì cấu trúc 'If + S + should happen to + V' nhấn mạnh sự tình cờ ngẫu nhiên trong mệnh đề điều kiện.",
+                    whyWrong: "B, C, D không ghép trong cấu trúc 'should happen to V'."
+                }
+            },
+            // 50
+            {
+                typeLabel: "Visual Q50",
+                q: "Look at the notification on the phone above. Unless we cut <span class='gap-slot' id='gap-25'>[ ? ]</span> on electricity usage, our environmental taxes will double.",
+                options: ["back", "out", "off", "down"],
+                answer: "back",
+                gapId: "gap-25",
+                hasCustomVisual: "phoneMessage",
+                exp: {
+                    translations: ["A. back (cut back on: cắt giảm)", "B. out: ngắt", "C. off: tắt", "D. down: giảm bớt"],
+                    sentenceTrans: "Hãy nhìn vào tin nhắn điện thoại ở trên. Trừ khi chúng ta cắt giảm mức tiêu thụ điện năng, bằng không thuế môi trường của chúng ta sẽ tăng gấp đôi.",
+                    whyCorrect: "Chọn A vì Phrasal verb 'cut back on' nghĩa là cắt giảm tiết kiệm chi phí/tiêu dùng.",
+                    whyWrong: "B, C, D không ghép thành cụm 'cut back on'."
+                }
+            }
+        ];
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        let userAnswers = {};
+        let shuffledQuestions = [];
+        let isSubmitted = false;
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+            userAnswers = {};
+            isSubmitted = false;
+
+            const shuffledRaw = shuffleArray(rawQuestionsData);
+
+            shuffledQuestions = shuffledRaw.map((item, index) => {
+                const shuffledOpts = shuffleArray(item.options);
+                return {
+                    ...item,
+                    displayIndex: index + 1,
+                    shuffledOpts: shuffledOpts
+                };
+            });
+
+            shuffledQuestions.forEach((qData, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${qIndex}`;
+
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header-badge';
+
+                const badgeGroup = document.createElement('div');
+                badgeGroup.className = 'badge-group';
+
+                const qNum = document.createElement('div');
+                qNum.className = 'question-number';
+                qNum.innerText = `Câu ${qIndex + 1} / ${shuffledQuestions.length}`;
+
+                const levelTag = document.createElement('div');
+                levelTag.className = 'level-indicator';
+                levelTag.innerText = 'ĐỘ KHÓ CAO';
+
+                const typeTag = document.createElement('div');
+                typeTag.className = 'type-badge';
+                typeTag.innerText = qData.typeLabel;
+
+                badgeGroup.appendChild(qNum);
+                badgeGroup.appendChild(levelTag);
+                badgeGroup.appendChild(typeTag);
+
+                const statusBadge = document.createElement('div');
+                statusBadge.className = 'status-badge';
+                statusBadge.id = `badge-${qIndex}`;
+
+                cardHeader.appendChild(badgeGroup);
+                cardHeader.appendChild(statusBadge);
+
+                let visualHtml = '';
+                if (qData.hasCustomVisual === 'saleSign') {
+                    visualHtml = `
+                        <div class="sale-sign-box">
+                            🌿 GREENPEACE ADVANCED CLEARANCE SALE 🌿<br>
+                            <span style="font-size:0.85rem; font-weight:700;">Exclusive eco-products available for registered members only!</span>
+                        </div>
+                    `;
+                } else if (qData.hasCustomVisual === 'phoneMessage') {
+                    visualHtml = `
+                        <div class="phone-message-box">
+                            <div class="phone-icon">💬</div>
+                            <div class="phone-text">
+                                <strong>Energy Warning Notice:</strong> "Urgent action required! Reduce your energy footprint to avoid heavy surcharges."
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = visualHtml + qData.q;
+
+                const optsGrid = document.createElement('div');
+                optsGrid.className = 'options-grid';
+
+                const prefixes = ['A', 'B', 'C', 'D'];
+
+                qData.shuffledOpts.forEach((opt, optIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.id = `opt-${qIndex}-${optIdx}`;
+                    btn.onclick = () => handleSelectAnswer(qIndex, opt, btn, qData.gapId);
+
+                    const prefix = document.createElement('span');
+                    prefix.className = 'option-prefix';
+                    prefix.innerText = prefixes[optIdx];
+
+                    const textSpan = document.createElement('span');
+                    textSpan.innerHTML = opt;
+
+                    btn.appendChild(prefix);
+                    btn.appendChild(textSpan);
+                    optsGrid.appendChild(btn);
+                });
+
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `explanation-${qIndex}`;
+
+                expBox.innerHTML = `
+                    <div class="explanation-title">
+                        💡 PHẦN GIẢI THÍCH CHI TIẾT (Ms Ngoc Hai FTU)
+                    </div>
+                    <div class="exp-section">
+                        <strong>1. Phân tích từ vựng/ngữ pháp 4 đáp án:</strong>
+                        <ul class="exp-options-list">
+                            ${qData.exp.translations.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="exp-section">
+                        <strong>2. Dịch nghĩa toàn câu:</strong><br>
+                        <em>"${qData.exp.sentenceTrans}"</em>
+                    </div>
+                    <div class="exp-section">
+                        <strong>3. Tại sao chọn đáp án đúng?</strong><br>
+                        ${qData.exp.whyCorrect}
+                    </div>
+                    <div class="exp-section">
+                        <strong>4. Tại sao các đáp án còn lại chưa đúng?</strong><br>
+                        ${qData.exp.whyWrong}
+                    </div>
+                `;
+
+                card.appendChild(cardHeader);
+                card.appendChild(qText);
+                card.appendChild(optsGrid);
+                card.appendChild(expBox);
+                container.appendChild(card);
+            });
+
+            updateProgress();
+            updateTotalVisibleCount();
+        }
+
+        function handleSelectAnswer(qIndex, selectedOpt, btn, gapId) {
+            if (isSubmitted) return;
+
+            const card = document.getElementById(`question-${qIndex}`);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            buttons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            userAnswers[qIndex] = selectedOpt;
+
+            if (gapId) {
+                const gapElement = document.getElementById(gapId);
+                if (gapElement) {
+                    gapElement.innerText = selectedOpt;
+                }
+            }
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const total = shuffledQuestions.length;
+            const pct = (answeredCount / total) * 100;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+            document.getElementById('progressText').innerText = `${answeredCount}/${total}`;
+        }
+
+        function updateTotalVisibleCount() {
+            const cards = document.querySelectorAll('.question-card:not(.hidden)');
+            document.getElementById('totalVisibleCount').innerText = cards.length;
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const total = shuffledQuestions.length;
+            const answeredCount = Object.keys(userAnswers).length;
+
+            if (answeredCount < total) {
+                const confirmSubmit = confirm(`Em mới làm ${answeredCount}/${total} câu. Em có chắc muốn nộp bài để chấm điểm không?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            let score = 0;
+            let wrongCount = 0;
+
+            shuffledQuestions.forEach((qData, qIndex) => {
+                const card = document.getElementById(`question-${qIndex}`);
+                const buttons = card.querySelectorAll('.option-btn');
+                const expBox = document.getElementById(`explanation-${qIndex}`);
+                const badge = document.getElementById(`badge-${qIndex}`);
+                const userChoice = userAnswers[qIndex];
+
+                buttons.forEach(b => {
+                    b.classList.add('locked');
+                    b.style.cursor = 'default';
+                });
+
+                const isCorrect = (userChoice === qData.answer);
+
+                if (isCorrect) {
+                    score++;
+                    badge.className = 'status-badge correct';
+                    badge.innerText = '✓ ĐÚNG';
+                    card.dataset.result = 'correct';
+                } else {
+                    wrongCount++;
+                    badge.className = 'status-badge wrong';
+                    badge.innerText = '✗ SAI';
+                    card.dataset.result = 'wrong';
+                }
+
+                buttons.forEach(b => {
+                    b.classList.remove('selected');
+                    const textSpan = b.querySelector('span:last-child');
+                    if (textSpan.innerHTML.trim() === qData.answer || textSpan.innerText.trim() === qData.answer) {
+                        b.classList.add('correct');
+                    } else if ((textSpan.innerHTML.trim() === userChoice || textSpan.innerText.trim() === userChoice) && !isCorrect) {
+                        b.classList.add('wrong');
+                    }
+                });
+
+                expBox.classList.add('active');
+            });
+
+            if (score >= total * 0.7) {
+                playSound('correct');
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            } else {
+                playSound('wrong');
+            }
+
+            document.getElementById('wrongCount').innerText = wrongCount;
+            document.getElementById('filterBar').classList.add('active');
+            document.getElementById('statsLabel').innerText = '🎯 Kết quả kiểm tra';
+            document.getElementById('submitContainer').style.display = 'none';
+
+            document.getElementById('scoreDisplay').innerText = `${score}/${total}`;
+            let feedback = "";
+            let icon = "🏆";
+            if (score === total) {
+                feedback = "XUẤT SẮC TUYỆT ĐỐI! Em đã hoàn thành xuất sắc 50 câu nâng cao Conditionals & Advanced Vocabulary! 👑✨";
+                icon = "🌟";
+            } else if (score >= total * 0.8) {
+                feedback = "RẤT TUYỆT VỜI! Kiến thức đảo ngữ, điều kiện hỗn hợp và từ vựng của em cực kỳ vững vàng! 🎉";
+                icon = "🔥";
+            } else if (score >= total * 0.5) {
+                feedback = "KHÁ TỐT! Bài thi 50 câu độ khó cao đã cho thấy nỗ lực tuyệt vời. Em bấm xem lại các câu sai để nhớ kĩ hơn nhé! 💪";
+                icon = "👏";
+            } else {
+                feedback = "CỐ GẮNG THÊM NHÉ! Đừng lo lắng, hãy đọc kĩ từng phần phân tích chi tiết của Ms Ngoc Hai FTU bên dưới để củng cố bài nhé! 📚";
+                icon = "🌱";
+            }
+
+            document.getElementById('feedbackText').innerText = feedback;
+            document.getElementById('modalIcon').innerText = icon;
+            document.getElementById('scoreModal').classList.add('active');
+        });
+
+        function reviewWrongAnswers() {
+            document.getElementById('scoreModal').classList.remove('active');
+            filterQuestionsResult('wrong');
+        }
+
+        function reviewAllAnswers() {
+            document.getElementById('scoreModal').classList.remove('active');
+            filterQuestionsResult('all');
+        }
+
+        function filterQuestionsResult(type) {
+            const cards = document.querySelectorAll('.question-card');
+            const btnAll = document.getElementById('btnFilterAll');
+            const btnWrong = document.getElementById('btnFilterWrong');
+
+            if (type === 'wrong') {
+                btnWrong.classList.add('active');
+                btnAll.classList.remove('active');
+                cards.forEach(c => {
+                    if (c.dataset.result === 'wrong') {
+                        c.classList.remove('hidden');
+                    } else {
+                        c.classList.add('hidden');
+                    }
+                });
+            } else {
+                btnAll.classList.add('active');
+                btnWrong.classList.remove('active');
+                cards.forEach(c => c.classList.remove('hidden'));
+            }
+            updateTotalVisibleCount();
+        }
+
+        window.onload = () => {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
